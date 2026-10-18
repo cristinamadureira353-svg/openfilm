@@ -841,7 +841,7 @@ function ChatPane({ project, banners, selection, assetsOpen }: { project: Projec
                   {file.state === 'importing' ? <Loader2 size={13} className="shrink-0 animate-spin text-[var(--text-muted)]" /> : <Icon size={13} className="shrink-0 text-[var(--text-muted)]" />}
                   <span className="flex min-w-0 flex-col">
                     <span className="truncate text-[11.5px] leading-tight text-[var(--text-muted)]">{file.name}</span>
-                    <span className="truncate text-[10.5px] leading-tight text-[var(--text-faint)]">{file.state === 'failed' ? 'Not added' : formatFileSize(file.size)}</span>
+                    <span className="truncate text-[10.5px] leading-tight text-[var(--text-faint)]">{file.state === 'failed' ? 'Not added' : file.folder ? 'Folder' : formatFileSize(file.size)}</span>
                   </span>
                   {remove}
                 </div>
