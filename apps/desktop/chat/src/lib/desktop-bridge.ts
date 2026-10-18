@@ -210,7 +210,7 @@ export interface DesktopBridge {
     /** What the agent does with nobody having written is the turn `turnId` (null: no longer), in its log. */
     adopt?(key: string, turnId: string | null, meta?: LocalAgentTurnMeta): Promise<{ ok: boolean }>;
     cancel(key: string): Promise<{ ok: true }>;
-    setOption(key: string, configId: string, value: unknown): Promise<{ ok: boolean; error?: string }>;
+    setOption(key: string, configId: string, value: unknown): Promise<{ ok: boolean; error?: string; result?: { configOptions?: LocalAgentSessionInfo['configOptions'] } }>;
     answerPermission(key: string, requestId: string, optionId: string | null): Promise<{ ok: boolean }>;
     /** Answers its question; null = skip. Older shells lack it (and never ask). */
     answerQuestion?(key: string, requestId: string, answers: Record<string, LocalAgentAnswer> | null): Promise<{ ok: boolean }>;

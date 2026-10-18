@@ -848,14 +848,19 @@ export async function runLocalAgentTurn({
   endUnprompted(session.key);
   turnByKey.set(session.key, turn);
 
-  /* Picked options: set only when they differ from the session's current value, saving a round trip. The model
-     first (it decides which efforts there are), then the rest at once */
+  /* Picked options: the model first (it decides which efforts there are), then the rest at once. Each is sent even
+     when the session seems to hold it already: an agent changes options itself (MiniMax Code resets its thinking
+     effort when the model changes) and says so only in a `config_option_update` the chat does not read, so a value
+     from the session's first snapshot can be out of date. What the agent answers is what it holds from then on */
   const live = session;
   const setOption = async ([configId, value]: [string, unknown]) => {
     const option = live.info.configOptions?.find((o) => o.id === configId);
-    if (!option || option.currentValue === value) return;
+    if (!option) return;
     const r = await bridge.setOption(live.key, configId, value);
-    if (r.ok) option.currentValue = value;
+    if (!r.ok) return;
+    const answered = r.result?.configOptions;
+    if (Array.isArray(answered) && answered.length) live.info.configOptions = answered;
+    else option.currentValue = value;
   };
   const picked = Object.entries(options);
   const isModel = ([configId]: [string, unknown]) => live.info.configOptions?.find((o) => o.id === configId)?.category === 'model';
