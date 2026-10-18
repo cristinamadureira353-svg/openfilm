@@ -22,7 +22,7 @@ export type AgentPick = LocalAgentId;
 
 type ConfigOptions = NonNullable<LocalAgentSessionInfo['configOptions']>;
 
-const AGENT_IDS: readonly LocalAgentId[] = ['codex', 'claude', 'gemini', 'copilot', 'cursor', 'opencode', 'codebuddy', 'qwen', 'kimi', 'byok'];
+const AGENT_IDS: readonly LocalAgentId[] = ['codex', 'claude', 'gemini', 'copilot', 'cursor', 'opencode', 'codebuddy', 'qwen', 'kimi', 'minimax', 'byok'];
 const isAgent = (v: unknown): v is LocalAgentId => AGENT_IDS.includes(v as LocalAgentId);
 
 interface Persisted {
@@ -229,6 +229,7 @@ const AGENT_FORCED_PREFS: Partial<Record<LocalAgentId, Record<string, unknown>>>
   claude: { mode: 'bypassPermissions' },
   codex: { mode: 'agent-full-access' },
   kimi: { mode: 'yolo' },
+  minimax: { permissionMode: 'bypassPermissions' },
   byok: { mode: 'agent-full-access' },
 };
 
