@@ -848,14 +848,13 @@ export async function runLocalAgentTurn({
   endUnprompted(session.key);
   turnByKey.set(session.key, turn);
 
-  /* Picked options: the model first (it decides which efforts there are), then the rest at once. Each is sent even
-     when the session seems to hold it already: an agent changes options itself (MiniMax Code resets its thinking
-     effort when the model changes) and says so only in a `config_option_update` the chat does not read, so a value
-     from the session's first snapshot can be out of date. What the agent answers is what it holds from then on */
+  /* Picked options: set only when they differ from what the session holds, the model first (it decides which efforts
+     there are), then the rest one after another. An agent may change other options when one is set (MiniMax Code
+     resets its thinking effort when the model changes), so what it answers replaces what the session holds */
   const live = session;
   const setOption = async ([configId, value]: [string, unknown]) => {
     const option = live.info.configOptions?.find((o) => o.id === configId);
-    if (!option) return;
+    if (!option || option.currentValue === value) return;
     const r = await bridge.setOption(live.key, configId, value);
     if (!r.ok) return;
     const answered = r.result?.configOptions;
@@ -865,7 +864,7 @@ export async function runLocalAgentTurn({
   const picked = Object.entries(options);
   const isModel = ([configId]: [string, unknown]) => live.info.configOptions?.find((o) => o.id === configId)?.category === 'model';
   for (const entry of picked.filter(isModel)) await setOption(entry);
-  await Promise.all(picked.filter((entry) => !isModel(entry)).map(setOption));
+  for (const entry of picked.filter((entry) => !isModel(entry))) await setOption(entry);
 
   /* where it is and how to work (the project, the `openfilm` manual, Studio already open) it was told when the
      session started (apps/desktop src/agents.mjs INSTRUCTIONS): the message goes as the person wrote it */
