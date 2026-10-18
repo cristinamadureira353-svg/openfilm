@@ -223,7 +223,8 @@ export const useLocalAgents = create<LocalAgentStore>((set, get) => ({
  * What the app sets for every agent and the menu does not offer: full access (it works in the person's own project
  * folder, every step is in the edit and version history and can be undone; clicking "Allow" a dozen times a turn
  * protects nothing). Ids differ between the adapters; an option a session does not have is skipped. The other agents
- * are started with it (their own flags, apps/desktop/src/agents.mjs), except Kimi and MiniMax Code, whose ACP servers take no flag.
+ * are started with it (their own flags, apps/desktop/src/agents.mjs), except Kimi and MiniMax Code, whose ACP servers
+ * take no flag.
  */
 const AGENT_FORCED_PREFS: Partial<Record<LocalAgentId, Record<string, unknown>>> = {
   claude: { mode: 'bypassPermissions' },
