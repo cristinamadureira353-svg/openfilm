@@ -20,7 +20,7 @@ export const AGENT_DOWNLOADS = Object.freeze({
   codebuddy: 'https://www.workbuddy.ai/docs/cli/installation',
   qwen: 'https://github.com/QwenLM/qwen-code',
   kimi: 'https://www.kimi.com/code',
-  minimax: 'https://agent.minimax.io/',
+  minimax: 'https://www.npmjs.com/package/@minimax-ai/code',
 });
 
 /**
