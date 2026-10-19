@@ -505,8 +505,9 @@ export function ExportCenter(props: ExportCenterProps) {
     }
     setWorking(t('exportCenter.queueing'));
     try {
-      /* the name typed here, unless there is none: every way out of this screen comes through here */
-      const typed = nameTyped ? exportName.trim() : '';
+      /* the name typed here, unless there is none or its field is hidden (a draft is named by its app): every way out
+         of this screen comes through here */
+      const typed = nameTyped && !toDrafts ? exportName.trim() : '';
       const named = typed ? jobs.map((job) => ({ ...job, name: typed })) : jobs;
       const queued = await startExports(props.projectId, named, s.folder || undefined);
       props.onQueued?.(queued);
@@ -1179,7 +1180,7 @@ export function ExportCenter(props: ExportCenterProps) {
                   onChange={(e) => { setExportName(e.target.value); setNameTyped(true); }}
                   onFocus={(e) => e.currentTarget.select()}
                   onKeyDown={(e) => {
-                    if (e.key === 'Enter' && !disabled) { e.preventDefault(); void queue(requests); }
+                    if (e.key === 'Enter' && !e.nativeEvent.isComposing && !disabled) { e.preventDefault(); void queue(requests); }
                   }}
                   className="h-10 w-[220px] min-w-[140px] rounded-lg border border-[var(--border)] bg-[var(--bg)] px-3 text-[13px] text-[var(--text)] outline-none focus:border-[var(--text-faint)]"
                 />

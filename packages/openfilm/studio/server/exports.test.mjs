@@ -687,6 +687,14 @@ test('a project exports as a zip holding its folder, or as the folder, each open
   assert.throws(() => createExports().start(project('My Film', dir), { kind: 'project', range: [0, 1] }), ExportError);
 });
 
+test('a project export named where it is asked for: the zip and the folder in it take that name', async () => {
+  const dir = fullProject();
+  const zipped = await exported({ kind: 'project', name: 'Hand-off' }, 'My Film', dir);
+  assert.equal(zipped.out, join(exportsRoot(), 'Hand-off.zip'));
+  assert.ok([...zipEntries(zipped.out).keys()].every((n) => n.startsWith('Hand-off/')));
+  assert.equal((await exported({ kind: 'project', as: 'folder', name: 'Hand-off' }, 'My Film', dir)).out, join(exportsRoot(), 'Hand-off'));
+});
+
 test('the API: where exports go and what can be made here; several at once; open and reveal only what is there', async () => {
   process.env.OPENFILM_HOME = join(scratch, 'home');
   process.env.OPENFILM_LIBRARY = join(scratch, 'library');

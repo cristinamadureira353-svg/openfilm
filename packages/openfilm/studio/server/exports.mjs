@@ -43,11 +43,11 @@
  *       the project itself, to hand on or keep (see projectFiles): its work always, the parts asked besides; a zip
  *       holding the project's folder, or the folder itself, opened as a project like any other
  *
- * Any of them but the project also takes `range: [from, to]` (seconds; not stills, posters, slides or nle), `label` (how
- * the person's list names it) and `name` (what the file is called; the project's own when there is none); those with a
- * picture (not one clip alone) take `burnSubtitles: true`, the subtitles drawn into the picture as the editor shows
- * them (captions.mjs: the cues and the person's style). `folder`: an absolute path (or ~/…) to write to instead of the
- * exports folder.
+ * Any of them but the project also takes `range: [from, to]` (seconds; not stills, posters, slides or nle) and `label`
+ * (how the person's list names it); any of them takes `name` (what the file is called; the project's own when there is
+ * none); those with a picture (not one clip alone) take `burnSubtitles: true`, the subtitles drawn into the picture as
+ * the editor shows them (captions.mjs: the cues and the person's style). `folder`: an absolute path (or ~/…) to write
+ * to instead of the exports folder.
  */
 import { execFile, fork, spawn } from 'node:child_process';
 import { randomBytes } from 'node:crypto';
@@ -1254,13 +1254,13 @@ export function createExports({ onChange = () => {}, captions = subtitlesForExpo
   }
 
   /**
-   * The project itself (see projectFiles): a zip holding its folder, or the folder, under the project's name. Copied
-   * a piece at a time, so its footage can be any size; a link to a file is copied as the file.
+   * The project itself (see projectFiles): a zip holding its folder, or the folder, under the name asked for or else
+   * the project's. Copied a piece at a time, so its footage can be any size; a link to a file is copied as the file.
    * @param {ExportJob} job @param {string} root @param {string} dir @param {AbortSignal} signal
    */
   async function exportProject(job, root, dir, signal) {
     const ask = /** @type {ProjectAsk} */ (job.ask);
-    const title = safeName(job.name);
+    const title = baseName(job.name, ask);
     const files = await projectFiles(root, ask.parts ?? [], resolve(dir));
     const total = Math.max(1, files.reduce((n, f) => n + f.size, 0));
     let told = 0;
