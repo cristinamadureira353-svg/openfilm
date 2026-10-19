@@ -161,6 +161,22 @@ test('a video export is render: an MP4 named after the project, with progress, n
   assert.ok(existsSync(join(exportsRoot(), 'Tiny 0-0.5s - mix.m4a')), 'the mix, named so');
 });
 
+test('an export named where it is asked for: that is the file, and the project is not asked', ffmpeg, async () => {
+  const done = await exported({ kind: 'video', fps: 24, name: '预告片' });
+  assert.equal(done.out, join(exportsRoot(), '预告片.mp4'));
+});
+
+test('a name of nothing but spaces: the project names the file, as before', ffmpeg, async () => {
+  const done = await exported({ kind: 'video', fps: 24, name: '   ' }, 'Blank');
+  assert.equal(done.out, join(exportsRoot(), 'Blank.mp4'));
+});
+
+test('a name is text, at most 120 characters', () => {
+  for (const name of [42, 'x'.repeat(121)]) {
+    assert.throws(() => createExports().start(project(), { kind: 'subtitles', name }), ExportError, JSON.stringify(name));
+  }
+});
+
 test('a renderer that dies fails its export with the reason, and exports go on', { ...ffmpeg, skip: ffmpeg.skip || (process.platform === 'win32' && 'no pgrep') }, async () => {
   const exports = createExports();
   const job = exports.start(project('Crash'), { kind: 'video' });
